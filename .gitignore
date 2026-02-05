@@ -1,0 +1,15 @@
+# Ignorar dependências pesadas
+node_modules/
+/server/node_modules/
+/web/node_modules/
+
+# Ignorar arquivos de sistema
+.DS_Store
+Thumbs.db
+
+# Ignorar arquivos de build (produção)
+dist/
+build/
+
+# Ignorar variáveis de ambiente (segurança)
+.env
