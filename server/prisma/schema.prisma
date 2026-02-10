@@ -7,11 +7,99 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model users {
-  id         Int      @id @default(autoincrement())
-  name       String
-  cpf        String   @unique
-  ra         Int      @unique
-  password   String
-  created_at DateTime @default(now())
+// 1. Tabela de Usuários
+model User {
+  id            String   @id @default(uuid())
+  name          String
+  cpf           String   @unique
+  ra            String   @unique
+  password      String
+  gender        String   // "Homãozinho", "Muié", "Transformers"
+  phone         String
+  photoUrl      String?
+  pixKey        String?
+  bio           String?
+  
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  cars          Car[]            
+  driverRides   Ride[]           @relation("DriverRides") // Relacionamento do Motorista
+  passengerRides RidePassenger[]
+  savedAddresses Address[]
+}
+
+// 2. Tabela de Carros
+model Car {
+  id        String   @id @default(uuid())
+  model     String   
+  brand     String   
+  color     String   
+  plate     String   
+  year      Int?     
+  
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  
+  rides     Ride[]  
+}
+
+// 3. Tabela de Endereços
+model Address {
+  id          String @id @default(uuid())
+  label       String // "Casa", "Trabalho", "Faculdade"
+  street      String
+  number      String
+  neighborhood String
+  city        String
+  latitude    Float
+  longitude   Float
+  
+  userId      String
+  user        User   @relation(fields: [userId], references: [id])
+}
+
+// 4. Tabela Corrida
+model Ride {
+  id              String   @id @default(uuid())
+  
+  driverId        String
+  driver          User     @relation("DriverRides", fields: [driverId], references: [id])
+  
+  carId           String
+  car             Car      @relation(fields: [carId], references: [id])
+  
+  // Origem e Destino
+  originLabel     String   // Ponto de Encontro (portaria que vai sair)
+  originLat       Float    // Latitude Inicial
+  originLong      Float    // Longitude Inicial
+  
+  destLabel       String   // Destino Final
+  destLat         Float    // Latitude Inicial
+  destLong        Float    // Longitude Inicial
+  
+  departureTime   DateTime // Hora da saída
+  availableSeats  Int      // Número de Lugares disponíveis
+  price           Decimal  // Custo
+  status          String   // "Aberta", "Em Progresso", "Finalizado", "Cancelado"
+  
+  passengers      RidePassenger[]
+  
+  createdAt       DateTime @default(now())
+}
+
+// 5. Tabela Pivô (Quem está em qual carona?)
+model RidePassenger {
+  id            String   @id @default(uuid())
+  
+  rideId        String
+  ride          Ride     @relation(fields: [rideId], references: [id])
+  
+  passengerId   String
+  passenger     User     @relation(fields: [passengerId], references: [id])
+  
+  status        String   // "Pendente", "Aprovado", "Rejeitado"
+  paymentStatus String   // "Devendo", "Pago"
+  
+  joinedAt      DateTime @default(now())
 }

@@ -12,7 +12,7 @@ app.use(express.json());
 app.post("/login", async (req, res) => {
   const { cpf, password } = req.body;
 
-  const user = await prisma.users.findUnique({
+  const user = await prisma.User.findUnique({
     where: { cpf: cpf },
   });
 
