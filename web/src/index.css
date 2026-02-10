@@ -1,7 +1,17 @@
 @import "tailwindcss";
 
+:root {
+  --brand-blue: #1b3556;
+}
+
 body {
-  background-color: #000000;
-  color: #ffffff;
-  font-family: ui-sans-serif, system-ui, sans-serif;
+  background-color: #ffffff;
+  color: var(--brand-blue);
+  font-family:
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    sans-serif;
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
 }

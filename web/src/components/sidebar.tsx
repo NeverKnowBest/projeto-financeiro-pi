@@ -5,24 +5,21 @@ export function Sidebar() {
   return (
     <aside
       className="
-      group                 /* 1. Define este elemento como o 'grupo' pai */
+      group 
       flex flex-col h-screen 
-      w-20 hover:w-64       /* 2. Largura padrão 20, expande para 64 no hover */
-      bg-zinc-900 text-zinc-100 border-r border-zinc-800 
-      transition-all duration-300 ease-in-out /* 3. Animação suave */
-      overflow-hidden       /* 4. Esconde o que sobrar quando encolher */
+      w-20 hover:w-64 
+      bg-[#1b3556] text-white border-r border-white/10 
+      transition-all duration-300 ease-in-out 
+      overflow-hidden shadow-xl z-20
     "
     >
-      {/* Logo / Cabeçalho */}
-      <div className="p-6 border-b border-zinc-800 flex items-center whitespace-nowrap">
-        {/* O ícone ou inicial do logo sempre aparece */}
+      {/* Logo */}
+      <div className="p-6 border-b border-white/10 flex items-center whitespace-nowrap">
         <img
           src="/icon.png"
           alt="Logo"
           className="w-8 h-8 rounded shrink-0 object-contain"
         />
-
-        {/* O texto completo só aparece no hover */}
         <span className="ml-3 font-bold text-xl text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
           Money Tracker
         </span>
@@ -30,64 +27,35 @@ export function Sidebar() {
 
       {/* Links de Navegação */}
       <nav className="flex-1 p-4 space-y-2">
-        <NavLink
-          to="/dashboard"
-          className={({ isActive }) =>
-            `flex items-center gap-3 px-3 py-3 rounded transition-colors whitespace-nowrap ${
-              isActive
-                ? "bg-zinc-800 text-green-400"
-                : "hover:bg-zinc-800 text-zinc-400 hover:text-zinc-100"
-            }`
-          }
-        >
-          <LayoutDashboard size={24} className="shrink-0" />{" "}
-          {/* shrink-0 impede o ícone de amassar */}
-          <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-            Dashboard
-          </span>
-        </NavLink>
-
-        <NavLink
-          to="/transacoes"
-          className={({ isActive }) =>
-            `flex items-center gap-3 px-3 py-3 rounded transition-colors whitespace-nowrap ${
-              isActive
-                ? "bg-zinc-800 text-green-400"
-                : "hover:bg-zinc-800 text-zinc-400 hover:text-zinc-100"
-            }`
-          }
-        >
-          <Wallet size={24} className="shrink-0" />
-
-          <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-            Transações
-          </span>
-        </NavLink>
-
-        <NavLink
-          to="/configuracoes"
-          className={({ isActive }) =>
-            `flex items-center gap-3 px-3 py-3 rounded transition-colors whitespace-nowrap ${
-              isActive
-                ? "bg-zinc-800 text-green-400"
-                : "hover:bg-zinc-800 text-zinc-400 hover:text-zinc-100"
-            }`
-          }
-        >
-          <Settings size={24} className="shrink-0" />
-
-          <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-            Configurações
-          </span>
-        </NavLink>
+        {[
+          { to: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
+          { to: "/transacoes", icon: Wallet, label: "Transações" },
+          { to: "/configuracoes", icon: Settings, label: "Configurações" },
+        ].map((item) => (
+          <NavLink
+            key={item.to}
+            to={item.to}
+            className={({ isActive }) =>
+              `flex items-center gap-3 px-3 py-3 rounded-xl transition-all whitespace-nowrap ${
+                isActive
+                  ? "bg-white/10 text-blue-300 shadow-inner"
+                  : "hover:bg-white/5 text-blue-100/70 hover:text-white"
+              }`
+            }
+          >
+            <item.icon size={24} className="shrink-0" />
+            <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 font-medium">
+              {item.label}
+            </span>
+          </NavLink>
+        ))}
       </nav>
 
-      {/* Rodapé da Sidebar */}
-      <div className="p-4 border-t border-zinc-800">
-        <button className="cursor-pointer flex items-center gap-3 text-red-400 hover:text-red-300 w-full px-3 py-2 transition-colors whitespace-nowrap">
+      {/* Rodapé */}
+      <div className="p-4 border-t border-white/10">
+        <button className="cursor-pointer flex items-center gap-3 text-red-300 hover:text-red-100 hover:bg-red-500/10 w-full px-3 py-3 rounded-xl transition-all whitespace-nowrap">
           <LogOut size={24} className="shrink-0" />
-
-          <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 font-medium">
             Sair
           </span>
         </button>
