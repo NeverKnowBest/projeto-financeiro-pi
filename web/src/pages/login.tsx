@@ -38,11 +38,9 @@ export function Login() {
   }
 
   return (
-    // Fundo da página agora é branco puro
+    // Fundo da página
     <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden bg-white">
-      {/* --- ELEMENTOS DE RISCOS DE LÁPIS (BACKGROUND) --- */}
       <div className="absolute inset-0 pointer-events-none opacity-40">
-        {/* Risco Azul */}
         <svg
           className="absolute top-[10%] left-[5%] w-64 h-32 rotate-12"
           viewBox="0 0 200 100"
@@ -56,7 +54,6 @@ export function Login() {
             strokeDasharray="5,5"
           />
         </svg>
-        {/* Risco Amarelo/Dourado */}
         <svg
           className="absolute bottom-[20%] right-[10%] w-80 h-40 -rotate-12"
           viewBox="0 0 200 100"
@@ -69,7 +66,6 @@ export function Login() {
             strokeLinecap="round"
           />
         </svg>
-        {/* Risco Vermelho Suave */}
         <svg
           className="absolute top-[60%] left-[15%] w-48 h-24 rotate-45"
           viewBox="0 0 100 50"
@@ -83,7 +79,6 @@ export function Login() {
             strokeDasharray="10,4"
           />
         </svg>
-        {/* Risco Verde */}
         <svg
           className="absolute top-[20%] right-[20%] w-56 h-28 -rotate-45"
           viewBox="0 0 100 50"
@@ -97,11 +92,9 @@ export function Login() {
           />
         </svg>
       </div>
-      {/* ----------------------------------------------- */}
 
       <Toaster position="top-right" richColors />
 
-      {/* Card Azul Marinho (#1b3556) mantido conforme você gostou */}
       <div className="w-full max-w-md p-10 rounded-[32px] shadow-[0_20px_50px_rgba(27,53,86,0.3)] relative z-10 border border-white/10 bg-[#1b3556]">
         <div className="text-center mb-10">
           <h1 className="text-4xl font-extrabold mb-3 tracking-tight text-white">

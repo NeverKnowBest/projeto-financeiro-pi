@@ -13,19 +13,18 @@ export function Sidebar() {
       overflow-hidden shadow-xl z-20
     "
     >
-      {/* Logo */}
-      <div className="p-6 border-b border-white/10 flex items-center whitespace-nowrap">
+      <div className="p-4 h-24 border-b border-white/10 flex items-center justify-center group-hover:justify-start transition-all duration-300">
         <img
           src="/icon.png"
           alt="Logo"
-          className="w-8 h-8 rounded shrink-0 object-contain"
+          className="w-12 h-12 rounded-lg shrink-0 object-contain transition-transform duration-300 group-hover:scale-110"
         />
-        <span className="ml-3 font-bold text-xl text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-          Money Tracker
+
+        <span className="ml-3 font-bold text-xl text-white hidden group-hover:block opacity-0 group-hover:opacity-100 transition-all duration-500 whitespace-nowrap">
+          Carona FAM
         </span>
       </div>
 
-      {/* Links de Navegação */}
       <nav className="flex-1 p-4 space-y-2">
         {[
           { to: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
@@ -44,14 +43,13 @@ export function Sidebar() {
             }
           >
             <item.icon size={24} className="shrink-0" />
-            <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 font-medium">
+            <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 font-medium text-sm">
               {item.label}
             </span>
           </NavLink>
         ))}
       </nav>
 
-      {/* Rodapé */}
       <div className="p-4 border-t border-white/10">
         <button className="cursor-pointer flex items-center gap-3 text-red-300 hover:text-red-100 hover:bg-red-500/10 w-full px-3 py-3 rounded-xl transition-all whitespace-nowrap">
           <LogOut size={24} className="shrink-0" />
