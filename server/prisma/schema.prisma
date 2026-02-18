@@ -7,99 +7,116 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// 1. Tabela de Usuários
-model User {
-  id            String   @id @default(uuid())
-  name          String
-  cpf           String   @unique
-  ra            String   @unique
-  password      String
-  gender        String   // "Homãozinho", "Muié", "Transformers"
-  phone         String
-  photoUrl      String?
-  pixKey        String?
-  bio           String?
-  
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-
-  cars          Car[]            
-  driverRides   Ride[]           @relation("DriverRides") // Relacionamento do Motorista
-  passengerRides RidePassenger[]
-  savedAddresses Address[]
+// Enums
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
 }
 
-// 2. Tabela de Carros
-model Car {
-  id        String   @id @default(uuid())
-  model     String   
-  brand     String   
-  color     String   
-  plate     String   
-  year      Int?     
-  
-  userId    String
-  user      User     @relation(fields: [userId], references: [id])
-  
-  rides     Ride[]  
+enum RideStatus {
+  ACTIVE
+  FINISHED
+  CANCELLED
 }
 
-// 3. Tabela de Endereços
-model Address {
-  id          String @id @default(uuid())
-  label       String // "Casa", "Trabalho", "Faculdade"
-  street      String
-  number      String
-  neighborhood String
-  city        String
-  latitude    Float
-  longitude   Float
-  
-  userId      String
-  user        User   @relation(fields: [userId], references: [id])
+enum ParticipationStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
 }
 
-// 4. Tabela Corrida
+// Tabelas
+model Student {
+  id               Int      @id @default(autoincrement())
+  name             String   @db.VarChar(100)
+  email            String   @unique @db.VarChar(100)
+  ra               String   @unique @db.VarChar(20)
+  course           String?  @db.VarChar(100)
+  gender           Gender?
+  age              Int?
+  phoneNumber      String?  @map("phone_number") @db.VarChar(20)
+  cep              String?  @db.VarChar(10)
+  avatarUrl        String?  @map("avatar_url") @db.VarChar(255)
+  isAdmin          Boolean  @default(false) @map("is_admin")
+  createdAt        DateTime @default(now()) @map("created_at")
+
+  // Relationships
+  vehicles        Vehicle[]
+  drivenRides     Ride[]          @relation("Driver")
+  passengerRides  RidePassenger[]
+  givenRatings    Rating[]        @relation("Rater")
+  receivedRatings Rating[]        @relation("Rated")
+
+  @@map("students")
+}
+
+model Vehicle {
+  id            Int     @id @default(autoincrement())
+  studentId     Int     @map("student_id")
+  brand         String? @db.VarChar(50)
+  model         String? @db.VarChar(50)
+  licensePlate  String  @unique @map("license_plate") @db.VarChar(10)
+  year          Int?
+  totalCapacity Int     @map("total_capacity")
+  carImageUrl   String? @map("car_image_url") @db.VarChar(255)
+
+  // Relationships
+  owner Student @relation(fields: [studentId], references: [id])
+  rides Ride[]
+
+  @@map("vehicles")
+}
+
 model Ride {
-  id              String   @id @default(uuid())
-  
-  driverId        String
-  driver          User     @relation("DriverRides", fields: [driverId], references: [id])
-  
-  carId           String
-  car             Car      @relation(fields: [carId], references: [id])
-  
-  // Origem e Destino
-  originLabel     String   // Ponto de Encontro (portaria que vai sair)
-  originLat       Float    // Latitude Inicial
-  originLong      Float    // Longitude Inicial
-  
-  destLabel       String   // Destino Final
-  destLat         Float    // Latitude Inicial
-  destLong        Float    // Longitude Inicial
-  
-  departureTime   DateTime // Hora da saída
-  availableSeats  Int      // Número de Lugares disponíveis
-  price           Decimal  // Custo
-  status          String   // "Aberta", "Em Progresso", "Finalizado", "Cancelado"
-  
-  passengers      RidePassenger[]
-  
-  createdAt       DateTime @default(now())
+  id             Int        @id @default(autoincrement())
+  driverId       Int        @map("driver_id")
+  vehicleId      Int        @map("vehicle_id")
+  origin         String     @db.VarChar(255)
+  destination    String     @db.VarChar(255)
+  totalDistance  Decimal?   @map("total_distance") @db.Decimal(6, 2)
+  suggestedPrice Decimal?   @map("suggested_price") @db.Decimal(8, 2)
+  arrivalTime    DateTime   @map("arrival_time")
+  departureTime  DateTime   @map("departure_time")
+  availableSeats Int        @map("available_seats")
+  status         RideStatus @default(ACTIVE)
+
+  // Relationships
+  driver     Student         @relation("Driver", fields: [driverId], references: [id])
+  vehicle    Vehicle         @relation(fields: [vehicleId], references: [id])
+  passengers RidePassenger[]
+  ratings    Rating[]
+
+  @@map("rides")
 }
 
-// 5. Tabela Pivô (Quem está em qual carona?)
 model RidePassenger {
-  id            String   @id @default(uuid())
-  
-  rideId        String
-  ride          Ride     @relation(fields: [rideId], references: [id])
-  
-  passengerId   String
-  passenger     User     @relation(fields: [passengerId], references: [id])
-  
-  status        String   // "Pendente", "Aprovado", "Rejeitado"
-  paymentStatus String   // "Devendo", "Pago"
-  
-  joinedAt      DateTime @default(now())
+  id          Int                 @id @default(autoincrement())
+  rideId      Int                 @map("ride_id")
+  passengerId Int                 @map("passenger_id")
+  status      ParticipationStatus @default(PENDING)
+  requestedAt DateTime?           @default(now()) @map("requested_at")
+
+  // Relationships
+  ride      Ride    @relation(fields: [rideId], references: [id])
+  passenger Student @relation(fields: [passengerId], references: [id])
+
+  @@map("ride_passengers")
+}
+
+model Rating {
+  id          Int      @id @default(autoincrement())
+  rideId      Int      @map("ride_id")
+  raterId     Int      @map("rater_id")
+  ratedUserId Int      @map("rated_user_id")
+  stars       Int
+  comment     String?  @db.Text
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  // Relationships
+  ride      Ride    @relation(fields: [rideId], references: [id])
+  rater     Student @relation("Rater", fields: [raterId], references: [id])
+  ratedUser Student @relation("Rated", fields: [ratedUserId], references: [id])
+
+  @@map("ratings")
 }
